@@ -48,7 +48,8 @@
       "Bash(gh repo create:*)",
       "Bash(git checkout:*)",
       "Bash(gh repo edit:*)",
-      "Bash(git credential-cache:*)"
+      "Bash(git credential-cache:*)",
+      "Bash(gh repo sync:*)"
     ],
     "deny": []
   }
