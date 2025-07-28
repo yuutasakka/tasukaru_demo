@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Git履歴可視化ツール
+  gitiles:
+    image: gitiles/gitiles:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/git-repos/moneyticket
+      - ./docker/gitiles:/etc/gitiles
+    command: ["--base-path=/git-repos", "--port=8080"]
+    
+  # GitLab CE (Git管理用)
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    hostname: 'localhost'
+    ports:
+      - '8081:80'
+      - '443:443'
+      - '22:22'
+    volumes:
+      - ./docker/gitlab/config:/etc/gitlab
+      - ./docker/gitlab/logs:/var/log/gitlab
+      - ./docker/gitlab/data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:8081'
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+    restart: unless-stopped
+    
+  # GitKraken Glo (プロジェクト管理)
+  glo-boards:
+    image: node:18-alpine
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      sh -c "
+      npm install -g @gitkraken/glo-cli &&
+      echo 'GitKraken Glo CLI installed' &&
+      tail -f /dev/null
+      "
+    
+  # File watcher (ファイル変更監視)
+  filewatcher:
+    image: node:18-alpine
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: >
+      sh -c "
+      npm install -g chokidar-cli &&
+      echo 'File watcher started on port 3002' &&
+      chokidar '**/*' --ignore node_modules --ignore .git -c 'echo \"{time} - {path} was {event}\"' | nc -lk 3002
+      "
+    ports:
+      - "3002:3002"
+      
+  # Code analysis
+  sonarqube:
+    image: sonarqube:community
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - ./docker/sonarqube/data:/opt/sonarqube/data
+      - ./docker/sonarqube/extensions:/opt/sonarqube/extensions
+      - ./docker/sonarqube/logs:/opt/sonarqube/logs

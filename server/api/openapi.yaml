@@ -1,0 +1,655 @@
+openapi: 3.0.3
+info:
+  title: MoneyTicket API
+  description: |
+    MoneyTicket金融商品診断アプリケーションのAPI仕様書です。
+    このAPIは、ユーザーの診断、SMS認証、管理機能を提供します。
+  version: 1.0.0
+  contact:
+    name: MoneyTicket Support
+    email: support@moneyticket.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.moneyticket.com/v1
+    description: 本番環境
+  - url: https://staging-api.moneyticket.com/v1
+    description: ステージング環境
+  - url: http://localhost:3000/v1
+    description: 開発環境
+
+tags:
+  - name: Authentication
+    description: 認証関連のエンドポイント
+  - name: Diagnosis
+    description: 診断関連のエンドポイント
+  - name: SMS
+    description: SMS認証関連のエンドポイント
+  - name: Admin
+    description: 管理者機能のエンドポイント
+  - name: User
+    description: ユーザー管理のエンドポイント
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: ユーザーログイン
+      description: メールアドレスとパスワードでログイン
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: ログアウト
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: ログアウト成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: トークンリフレッシュ
+      description: リフレッシュトークンを使用してアクセストークンを更新
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: トークン更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+
+  /sms/send-code:
+    post:
+      tags:
+        - SMS
+      summary: SMS認証コード送信
+      description: 指定された電話番号に6桁の認証コードを送信
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendSMSRequest'
+      responses:
+        '200':
+          description: SMS送信成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+
+  /sms/verify-code:
+    post:
+      tags:
+        - SMS
+      summary: SMS認証コード検証
+      description: 受信した認証コードを検証
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifySMSRequest'
+      responses:
+        '200':
+          description: 認証成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifySMSResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /diagnosis/submit:
+    post:
+      tags:
+        - Diagnosis
+      summary: 診断結果送信
+      description: ユーザーの診断回答を送信して結果を取得
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiagnosisSubmitRequest'
+      responses:
+        '200':
+          description: 診断完了
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagnosisResult'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+  /diagnosis/results/{id}:
+    get:
+      tags:
+        - Diagnosis
+      summary: 診断結果取得
+      description: 保存された診断結果を取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: 診断結果ID
+      responses:
+        '200':
+          description: 診断結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagnosisResult'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      summary: ユーザー一覧取得
+      description: 管理者用のユーザー一覧を取得
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: ページ番号
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+          description: 1ページあたりの件数
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: 検索キーワード
+      responses:
+        '200':
+          description: ユーザー一覧
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /admin/users/{id}:
+    get:
+      tags:
+        - Admin
+      summary: ユーザー詳細取得
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ユーザーID
+      responses:
+        '200':
+          description: ユーザー詳細
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags:
+        - Admin
+      summary: ユーザー削除
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ユーザーID
+      responses:
+        '204':
+          description: 削除成功
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /admin/analytics/summary:
+    get:
+      tags:
+        - Admin
+      summary: 分析サマリー取得
+      description: ダッシュボード用の統計情報を取得
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 分析サマリー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsSummary'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: password123
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+            tokens:
+              $ref: '#/components/schemas/Tokens'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 550e8400-e29b-41d4-a716-446655440000
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin]
+        createdAt:
+          type: string
+          format: date-time
+
+    Tokens:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT アクセストークン
+        refreshToken:
+          type: string
+          description: リフレッシュトークン
+        expiresIn:
+          type: integer
+          description: 有効期限（秒）
+          example: 3600
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+
+    SendSMSRequest:
+      type: object
+      required:
+        - phoneNumber
+      properties:
+        phoneNumber:
+          type: string
+          pattern: '^0[789]0\d{8}$'
+          example: '09012345678'
+          description: 日本の携帯電話番号
+
+    VerifySMSRequest:
+      type: object
+      required:
+        - phoneNumber
+        - code
+      properties:
+        phoneNumber:
+          type: string
+          pattern: '^0[789]0\d{8}$'
+        code:
+          type: string
+          pattern: '^\d{6}$'
+          example: '123456'
+
+    VerifySMSResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        verified:
+          type: boolean
+        message:
+          type: string
+
+    DiagnosisSubmitRequest:
+      type: object
+      required:
+        - age
+        - experience
+        - purpose
+        - amount
+        - timing
+        - phoneNumber
+      properties:
+        age:
+          type: string
+          enum: [20s, 30s, 40s, 50s, 60s]
+          description: 年齢層
+        experience:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          description: 投資経験
+        purpose:
+          type: string
+          enum: [asset, retirement, education, others]
+          description: 投資目的
+        amount:
+          type: string
+          enum: [under10k, 10k-30k, 30k-50k, over50k]
+          description: 月額投資額
+        timing:
+          type: string
+          enum: [now, 3months, 6months, 1year]
+          description: 開始時期
+        phoneNumber:
+          type: string
+          pattern: '^0[789]0\d{8}$'
+
+    DiagnosisResult:
+      type: object
+      properties:
+        id:
+          type: string
+        recommendedProducts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        estimatedReturns:
+          type: object
+          properties:
+            yearly:
+              type: number
+              format: float
+            total:
+              type: number
+              format: float
+        createdAt:
+          type: string
+          format: date-time
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [stock, bond, fund, etf]
+        description:
+          type: string
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        expectedReturn:
+          type: number
+          format: float
+        minInvestment:
+          type: number
+          format: float
+
+    UserListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        phoneNumber:
+          type: string
+        diagnosisDate:
+          type: string
+          format: date-time
+        verified:
+          type: boolean
+        lastActive:
+          type: string
+          format: date-time
+
+    UserDetail:
+      allOf:
+        - $ref: '#/components/schemas/UserSummary'
+        - type: object
+          properties:
+            diagnosisAnswers:
+              $ref: '#/components/schemas/DiagnosisSubmitRequest'
+            diagnosisResults:
+              type: array
+              items:
+                $ref: '#/components/schemas/DiagnosisResult'
+
+    AnalyticsSummary:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        verifiedUsers:
+          type: integer
+        totalDiagnoses:
+          type: integer
+        conversionRate:
+          type: number
+          format: float
+        popularProducts:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+              count:
+                type: integer
+        userGrowth:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              count:
+                type: integer
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    MessageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+  responses:
+    BadRequestError:
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: BAD_REQUEST
+              message: 入力データが不正です
+
+    UnauthorizedError:
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: UNAUTHORIZED
+              message: 認証が必要です
+
+    ForbiddenError:
+      description: アクセス権限なし
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: FORBIDDEN
+              message: このリソースへのアクセス権限がありません
+
+    NotFoundError:
+      description: リソースが見つかりません
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: NOT_FOUND
+              message: 指定されたリソースが見つかりません
+
+    TooManyRequestsError:
+      description: リクエスト制限超過
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: TOO_MANY_REQUESTS
+              message: リクエスト回数が制限を超えました
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: リクエスト制限数
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: 残りリクエスト可能数
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+          description: リセット時刻（Unix timestamp）

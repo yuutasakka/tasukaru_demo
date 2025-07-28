@@ -1,0 +1,29 @@
+{
+  "validUser": {
+    "username": "testuser",
+    "password": "Test@123456!",
+    "email": "test@example.com"
+  },
+  "adminUser": {
+    "username": "admin",
+    "password": "Admin@123456!",
+    "email": "admin@example.com"
+  },
+  "diagnosisData": {
+    "valid": {
+      "age": "30代",
+      "experience": "なし",
+      "purpose": "老後の資金準備",
+      "amount": "1万円〜3万円",
+      "timing": "今すぐ",
+      "phone": "09012345678"
+    },
+    "invalid": {
+      "phone": "123"
+    }
+  },
+  "otp": {
+    "valid": "123456",
+    "invalid": "000000"
+  }
+}

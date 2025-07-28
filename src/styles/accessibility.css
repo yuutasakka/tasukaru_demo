@@ -1,0 +1,307 @@
+/* アクセシビリティ CSS */
+
+/* スクリーンリーダー専用コンテンツ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* フォーカス時にスクリーンリーダー専用コンテンツを表示 */
+.sr-only:focus,
+.focus-within\:not-sr-only:focus-within .sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* キーボードユーザー向けのフォーカススタイル */
+.keyboard-user *:focus,
+.keyboard-user *:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+/* 高コントラストモード */
+.high-contrast {
+  --text-color: #000000;
+  --bg-color: #ffffff;
+  --link-color: #0000ff;
+  --border-color: #000000;
+}
+
+
+.high-contrast a {
+  text-decoration: underline !important;
+}
+
+.high-contrast button {
+  border: 2px solid var(--border-color) !important;
+}
+
+/* アニメーション軽減 */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* フォントサイズ調整 */
+.font-size-small {
+  --font-scale: 0.875;
+}
+
+.font-size-medium {
+  --font-scale: 1;
+}
+
+.font-size-large {
+  --font-scale: 1.25;
+}
+
+[data-font-size="small"] {
+  font-size: calc(1rem * 0.875);
+}
+
+[data-font-size="large"] {
+  font-size: calc(1rem * 1.25);
+}
+
+/* ライブリージョンのスタイル */
+[aria-live] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* フォーカストラップ用のスタイル */
+.focus-trap {
+  position: relative;
+}
+
+.focus-trap::before,
+.focus-trap::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* スキップリンクのスタイル */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 1000;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* カスタムフォーカスリング */
+.focus-ring {
+  --ring-offset-shadow: 0 0 0 var(--ring-offset-width, 2px) var(--ring-offset-color, #fff);
+  --ring-shadow: 0 0 0 calc(2px + var(--ring-offset-width, 2px)) var(--ring-color, #3b82f6);
+  box-shadow: var(--ring-offset-shadow), var(--ring-shadow), var(--shadow, 0 0 #0000);
+}
+
+/* アクセシブルなリンクスタイル */
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ボタンのアクセシブルスタイル */
+button:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* フォーム要素のアクセシブルスタイル */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-color: #3b82f6;
+}
+
+/* エラー状態のスタイル */
+[aria-invalid="true"] {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+/* 必須フィールドのマーク */
+[aria-required="true"]::after {
+  content: " *";
+  color: #ef4444;
+}
+
+/* ツールチップのアクセシブルスタイル */
+[role="tooltip"] {
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  max-width: 200px;
+  z-index: 1000;
+}
+
+/* モーダルのアクセシブルスタイル */
+[role="dialog"] {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* ローディング状態のアクセシブルスタイル */
+[aria-busy="true"] {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+/* テーブルのアクセシブルスタイル */
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+}
+
+th, td {
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+}
+
+/* プログレスバーのスタイル */
+[role="progressbar"] {
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+/* アラートのスタイル */
+[role="alert"] {
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #ef4444;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+[role="status"] {
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #3b82f6;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+/* タブのアクセシブルスタイル */
+[role="tablist"] {
+  display: flex;
+  border-bottom: 1px solid #d1d5db;
+}
+
+[role="tab"] {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+[role="tab"][aria-selected="true"] {
+  background: #f3f4f6;
+  border-bottom: 2px solid #3b82f6;
+}
+
+[role="tab"]:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+/* メニューのアクセシブルスタイル */
+[role="menu"] {
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+}
+
+[role="menuitem"] {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+[role="menuitem"]:hover,
+[role="menuitem"]:focus {
+  background: #f3f4f6;
+}
+
+/* Windows High Contrast Mode対応 */
+@media (prefers-contrast: high) {
+  * {
+    border-color: ButtonText !important;
+  }
+  
+  button {
+    border: 1px solid ButtonText !important;
+  }
+}
+
+/* 印刷時のアクセシビリティ */
+@media print {
+  .sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    clip: auto !important;
+    overflow: visible !important;
+  }
+  
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+  
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+}

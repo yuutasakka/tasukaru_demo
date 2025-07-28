@@ -1,0 +1,297 @@
+name: Secure Build Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # 依存関係の検証
+  dependency-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # 依存関係のハッシュ検証
+      - name: Verify package-lock.json integrity
+        run: |
+          echo "Verifying package-lock.json integrity..."
+          npm ci --ignore-scripts
+          npm audit signatures
+
+      # 脆弱性スキャン
+      - name: Run npm audit
+        run: |
+          npm audit --production
+          npm audit --json > npm-audit.json || true
+
+      # OWASP Dependency Check
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'moneyticket'
+          path: '.'
+          format: 'ALL'
+          args: >
+            --enableRetired
+            --enableExperimental
+
+      # Snyk による脆弱性チェック
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      # ライセンスチェック
+      - name: License Check
+        run: |
+          npx license-checker --production --excludePrivatePackages --onlyAllow 'MIT;Apache-2.0;BSD;ISC;CC0-1.0'
+
+  # ソースコードセキュリティ分析
+  code-security:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # CodeQL 分析
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript, typescript
+          queries: security-extended, security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      # Semgrep セキュリティスキャン
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/typescript
+            p/react
+            p/nodejs
+          generateSarif: true
+
+      # GitLeaks によるシークレットスキャン
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # セキュアビルド
+  secure-build:
+    runs-on: ubuntu-latest
+    needs: [dependency-check, code-security]
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      # ビルド環境の検証
+      - name: Verify build environment
+        run: |
+          echo "Build environment verification..."
+          env | grep -E '^(NODE_|NPM_|CI|GITHUB_)' | sort
+          sha256sum package.json package-lock.json
+
+      # セキュアビルド
+      - name: Secure Build
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+        env:
+          NODE_ENV: production
+
+      # ビルド成果物のハッシュ生成
+      - name: Generate build artifacts hash
+        run: |
+          find dist -type f -exec sha256sum {} \; > dist-checksums.txt
+          cat dist-checksums.txt
+
+      # SBOM (Software Bill of Materials) 生成
+      - name: Generate SBOM
+        run: |
+          npx @cyclonedx/cyclonedx-npm --output-file sbom.json
+          npx @cyclonedx/cyclonedx-npm --output-file sbom.xml --output-format xml
+
+      # アーティファクトの保存
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist/
+            dist-checksums.txt
+            sbom.json
+            sbom.xml
+          retention-days: 30
+
+  # コンテナイメージのビルドと署名
+  container-build:
+    runs-on: ubuntu-latest
+    needs: secure-build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha,prefix={{branch}}-
+
+      # マルチステージビルドでセキュアなイメージ作成
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.secure
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+            VERSION=${{ steps.meta.outputs.version }}
+
+      # コンテナイメージの署名
+      - name: Sign container image
+        run: |
+          cosign sign --yes \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.ref }}" \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+
+      # Trivy によるイメージスキャン
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # セキュリティレポート生成
+  security-report:
+    runs-on: ubuntu-latest
+    needs: [dependency-check, code-security, secure-build, container-build]
+    if: always()
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Generate Security Report
+        run: |
+          cat > security-report.md << EOF
+          # Security Build Report
+
+          ## Build Information
+          - Repository: ${{ github.repository }}
+          - Branch: ${{ github.ref_name }}
+          - Commit: ${{ github.sha }}
+          - Build Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ## Security Checks Summary
+          - Dependency Check: ${{ needs.dependency-check.result }}
+          - Code Security: ${{ needs.code-security.result }}
+          - Secure Build: ${{ needs.secure-build.result }}
+          - Container Build: ${{ needs.container-build.result }}
+
+          ## Recommendations
+          1. Review all HIGH and CRITICAL vulnerabilities
+          2. Update dependencies regularly
+          3. Monitor security advisories
+
+          ---
+          Generated by Secure Build Pipeline
+          EOF
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.md
+          retention-days: 90
+
+# セキュリティ設定の検証
+  verify-security:
+    runs-on: ubuntu-latest
+    needs: container-build
+    steps:
+      - name: Verify signatures
+        run: |
+          cosign verify \
+            --certificate-identity-regexp "https://github.com/${{ github.repository }}/.github/workflows/secure-build.yml@refs/.*" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.container-build.outputs.digest }}

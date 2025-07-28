@@ -1,0 +1,120 @@
+# MoneyTicket robots.txt
+# https://moneyticket.com/robots.txt
+
+# Default - Allow all bots
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /.well-known/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /test/
+Disallow: /_next/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /.env
+Disallow: /config/
+Disallow: /dist/
+Disallow: /build/
+
+# Allow search engines to access important resources
+Allow: /assets/
+Allow: /images/
+Allow: /public/
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+
+# Specific bot rules
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 2
+
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 2
+
+# Social media bots
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: Rogerbot
+Disallow: /
+
+User-agent: SiteExplorer
+Disallow: /
+
+User-agent: MauiBot
+Disallow: /
+
+User-agent: Xenu
+Disallow: /
+
+# GPT bots
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 10
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://moneyticket.com/sitemap.xml
+Sitemap: https://moneyticket.com/sitemap-index.xml
+
+# Host directive (some crawlers support this)
+Host: https://moneyticket.com
+
+# Crawl-delay default (in seconds)
+Crawl-delay: 1
+
+# Clean-param directive (for duplicate content)
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&fbclid&gclid /

@@ -1,0 +1,121 @@
+# セキュアなマルチステージDockerfile
+
+# ========================================
+# Stage 1: 依存関係のインストール（ビルド環境）
+# ========================================
+FROM node:20-alpine AS dependencies
+
+# セキュリティアップデート
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# 非rootユーザーの作成
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# 作業ディレクトリ
+WORKDIR /app
+
+# 依存関係ファイルのコピー
+COPY package*.json ./
+
+# プロダクション依存関係のインストール
+RUN npm ci --only=production --ignore-scripts && \
+    npm cache clean --force
+
+# ========================================
+# Stage 2: ビルド環境
+# ========================================
+FROM node:20-alpine AS builder
+
+# セキュリティアップデート
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# 依存関係とソースコードのコピー
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+
+COPY . .
+
+# ビルド引数
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+# ビルド
+RUN npm run build && \
+    # ビルド後の不要ファイル削除
+    rm -rf src/ \
+    rm -rf node_modules/ \
+    rm -rf .git/ \
+    rm -rf .env* \
+    rm -rf .github/
+
+# ========================================
+# Stage 3: セキュリティスキャナー
+# ========================================
+FROM aquasec/trivy:latest AS scanner
+
+WORKDIR /app
+
+# ビルド成果物のコピー
+COPY --from=builder /app/dist ./dist
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+
+# スキャンの実行
+RUN trivy filesystem --severity HIGH,CRITICAL --no-progress --format json -o /tmp/trivy-report.json /app || true
+
+# ========================================
+# Stage 4: 本番環境（最小構成）
+# ========================================
+FROM gcr.io/distroless/nodejs20-debian12:nonroot
+
+# ラベル
+LABEL org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.title="MoneyTicket Secure App" \
+      org.opencontainers.image.description="Secure container for MoneyTicket application" \
+      org.opencontainers.image.vendor="MoneyTicket Inc." \
+      org.opencontainers.image.licenses="MIT"
+
+# 環境変数
+ENV NODE_ENV=production \
+    NODE_OPTIONS="--no-deprecation --no-warnings" \
+    PORT=8080
+
+# 非rootユーザーとして実行
+USER nonroot:nonroot
+
+# 作業ディレクトリ
+WORKDIR /app
+
+# 必要最小限のファイルのみコピー
+COPY --from=dependencies --chown=nonroot:nonroot /app/node_modules ./node_modules
+COPY --from=builder --chown=nonroot:nonroot /app/dist ./dist
+COPY --from=builder --chown=nonroot:nonroot /app/package*.json ./
+
+# ヘルスチェック
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:8080/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"
+
+# ポート公開（非特権ポート）
+EXPOSE 8080
+
+# セキュリティ設定
+# - 読み取り専用ルートファイルシステム
+# - 非rootユーザー実行
+# - ケーパビリティの削除
+# - セキュリティオプション
+
+# エントリーポイント
+ENTRYPOINT ["node"]
+CMD ["dist/server/index.js"]

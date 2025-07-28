@@ -1,0 +1,94 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment variables - CRITICAL: Never commit these
+.env
+.env.*
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+*.env
+
+# Security alerts and sensitive documents
+SECURITY_ALERT.md
+
+# Security configuration files (production)
+security.config.prod.ts
+security.config.production.ts
+
+# API keys and secrets
+*.key
+*.pem
+credentials.json
+secrets.json
+config.json
+supabase.config.ts
+
+# Sensitive data files
+admin_credentials.json
+backup_codes.txt
+api_keys.txt
+tokens.json
+ADMIN_CREDENTIALS.md
+
+# IDE specific secrets
+.vscode/settings.json
+.idea/workspace.xml
+
+# Debug and test files
+test_*.js
+test_*.cjs
+debug_*.js
+*_test.js
+*_debug.js
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vercel
+
+# Cursor editor
+.cursor/
+*.cursor
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+thumbs.db
+Thumbs.db
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini

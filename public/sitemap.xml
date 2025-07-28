@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+  
+  <!-- ホームページ -->
+  <url>
+    <loc>https://moneyticket.com/</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- 診断ページ -->
+  <url>
+    <loc>https://moneyticket.com/diagnosis</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- 診断結果ページ -->
+  <url>
+    <loc>https://moneyticket.com/results</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- ログイン選択ページ -->
+  <url>
+    <loc>https://moneyticket.com/login</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- 利用規約ページ -->
+  <url>
+    <loc>https://moneyticket.com/terms</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- プライバシーポリシーページ -->
+  <url>
+    <loc>https://moneyticket.com/privacy</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- 会社概要ページ -->
+  <url>
+    <loc>https://moneyticket.com/about</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  
+  <!-- お問い合わせページ -->
+  <url>
+    <loc>https://moneyticket.com/contact</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- よくある質問ページ -->
+  <url>
+    <loc>https://moneyticket.com/faq</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- サービス紹介ページ -->
+  <url>
+    <loc>https://moneyticket.com/services</loc>
+    <lastmod>2025-01-22T00:00:00+09:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+</urlset>

@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスカル - 資金調達力診断</title>
+    <meta name="description" content="30秒であなたの資金調達力をチェック！キャッシング・ファクタリング業者調査の前に自分の実力を把握しよう">
+    
+    <!-- PWAメタタグ -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="タスカル" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- PWAアイコン -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <link rel="icon" href="/favicon.ico" />
+    
+    <!-- SEOメタタグ -->
+    <meta property="og:title" content="タスカル - 資金調達力診断" />
+    <meta property="og:description" content="30秒であなたの資金調達力をチェック！キャッシング・ファクタリング業者調査の前に自分の実力を把握しよう" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/pwa-512x512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="タスカル - 資金調達力診断" />
+    <meta name="twitter:description" content="30秒であなたの資金調達力をチェック！" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/styles/design-system.css">
+    <link rel="stylesheet" href="/src/styles/accessibility.css">
+    <style>
+        :root {
+            /* 🎨 タスカル デザインシステム - プロフェッショナルカラー */
+            --primary-navy: #3174F3;
+            --primary-midnight: #1E5FE1;
+            --primary-slate: #5B92F5;
+            --accent-gold: #F5A623;
+            --accent-platinum: #F7B84D;
+            --accent-emerald: #10B981;
+            --accent-rose: #EF4444;
+            
+            /* 📖 高可読性グレースケール - WCAG AA準拠 */
+            --neutral-50: #FFFFFF;
+            --neutral-100: #F7F9FC;
+            --neutral-200: #EDF1F7;
+            --neutral-300: #E5E7EB;
+            --neutral-400: #D1D5DB;
+            --neutral-500: #9CA3AF;
+            --neutral-600: #6B7280;
+            --neutral-700: #4B5563;
+            --neutral-800: #374151;
+            --neutral-900: #333333;
+            
+            /* ✨ プロフェッショナルグラデーション */
+            --gradient-primary: linear-gradient(135deg, #3174F3 0%, #1E5FE1 100%);
+            --gradient-luxury: linear-gradient(135deg, #5B92F5 0%, #3174F3 50%, #1E5FE1 100%);
+            --gradient-gold: linear-gradient(135deg, #F5A623 0%, #E89100 100%);
+            --gradient-platinum: linear-gradient(135deg, #FFFFFF 0%, #F7F9FC 100%);
+            --gradient-emerald: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            
+            /* 🔤 タイポグラフィー */
+            --font-primary: 'Noto Sans JP', 'メイリオ', 'Meiryo', 'Hiragino Sans', sans-serif;
+            --font-display: 'Noto Sans JP', 'メイリオ', 'Meiryo', 'Hiragino Sans', sans-serif;
+            --font-japanese: 'Noto Sans JP', 'メイリオ', 'Meiryo', sans-serif;
+            
+            /* 📏 改善されたレスポンシブフォントサイズ - より視認性重視 */
+            --text-xs: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+            --text-sm: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+            --text-base: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+            --text-lg: clamp(1.25rem, 1.1rem + 0.75vw, 1.375rem);
+            --text-xl: clamp(1.375rem, 1.2rem + 0.875vw, 1.625rem);
+            --text-2xl: clamp(1.625rem, 1.4rem + 1.125vw, 2rem);
+            --text-3xl: clamp(2rem, 1.6rem + 2vw, 2.5rem);
+            --text-4xl: clamp(2.5rem, 2rem + 2.5vw, 3.25rem);
+            --text-5xl: clamp(3.25rem, 2.6rem + 3.25vw, 4rem);
+            --text-6xl: clamp(4rem, 3.2rem + 4vw, 5rem);
+            
+            /* 📏 改善されたレスポンシブスペーシング */
+            --space-xs: clamp(0.375rem, 0.3rem + 0.375vw, 0.5rem);
+            --space-sm: clamp(0.625rem, 0.5rem + 0.625vw, 0.875rem);
+            --space-md: clamp(1.125rem, 1rem + 0.625vw, 1.5rem);
+            --space-lg: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+            --space-xl: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
+            --space-2xl: clamp(3.5rem, 3rem + 2.5vw, 4.5rem);
+            --space-3xl: clamp(4.5rem, 3.5rem + 5vw, 6rem);
+            
+            /* 🌟 エレガントシャドウ */
+            --shadow-sm: 0 2px 4px rgba(11, 20, 38, 0.06);
+            --shadow-md: 0 4px 12px rgba(11, 20, 38, 0.1);
+            --shadow-lg: 0 8px 24px rgba(11, 20, 38, 0.12);
+            --shadow-xl: 0 16px 40px rgba(11, 20, 38, 0.16);
+            --shadow-2xl: 0 24px 64px rgba(11, 20, 38, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--neutral-800);
+            background: var(--gradient-platinum);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            letter-spacing: -0.01em;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            max-width: 100vw;
+            word-wrap: break-word;
+            hyphens: auto;
+        }
+
+        /* グローバル横スクロール防止 */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        /* 画像とメディアの制約 */
+        img, video, iframe, embed, object {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* 🌸 日本語フォント対応 */
+        body.verification-page-active {
+            font-family: var(--font-japanese);
+            background: var(--gradient-luxury);
+        }
+
+        /* 📚 プレミアムタイポグラフィ - レスポンシブ対応 */
+        .heading-display {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--primary-navy);
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            font-size: var(--text-4xl);
+        }
+
+        .heading-primary {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            color: var(--primary-navy);
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            font-size: var(--text-3xl);
+        }
+        
+        .text-luxury {
+            color: var(--neutral-600);
+            font-weight: 400;
+            line-height: 1.6;
+            font-size: var(--text-base);
+        }
+
+        .gradient-text {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 🎭 エレガントアニメーション */
+        @keyframes sophisticated-fade-in {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes elegant-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+
+        @keyframes luxury-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.5); }
+        }
+
+        /* 💎 ラグジュアリーカード - レスポンシブ対応 */
+        .luxury-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: clamp(16px, 2vw, 24px);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-xl);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: sophisticated-fade-in 0.8s ease-out;
+            max-width: 100%;
+        }
+
+        .luxury-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-2xl);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* 🔘 強化されたプレミアムボタン - 完全レスポンシブ対応 */
+        .premium-button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: clamp(12px, 1.5vw, 16px);
+            padding: clamp(14px, 3vw, 18px) clamp(24px, 5vw, 32px);
+            font-family: var(--font-primary);
+            font-weight: 600;
+            font-size: var(--text-base);
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            width: 100%;
+            max-width: min(400px, calc(100vw - 2rem));
+            min-height: clamp(48px, 12vw, 56px);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .premium-button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            background: linear-gradient(135deg, #1A2332 0%, #374151 100%);
+        }
+
+        .gold-accent-button {
+            background: var(--gradient-gold);
+            color: var(--primary-navy);
+            animation: luxury-glow 3s infinite;
+        }
+
+        .gold-accent-button:hover {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        }
+
+        /* 📝 強化されたエレガント入力フィールド - 完全レスポンシブ対応 */
+        .luxury-input {
+            background: #ffffff;
+            border: 2px solid var(--neutral-400);
+            border-radius: clamp(8px, 1vw, 12px);
+            padding: clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px);
+            font-family: var(--font-primary);
+            font-size: clamp(16px, 4vw, 18px); /* iOS Safari ズーム防止 */
+            color: var(--neutral-800);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            min-height: clamp(48px, 12vw, 56px);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+
+        .luxury-input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            outline: none;
+        }
+
+        /* アイコン非表示 */
+        .fas, .fab, .far, [class*="fa-"] {
+            display: none !important;
+        }
+
+        /* CDN読み込み失敗時の基本スタイル */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* フォント読み込み失敗時のフォールバック */
+        body {
+            font-family: var(--font-primary);
+            font-display: swap;
+        }
+
+        /* Tailwind CSS読み込み失敗時のフォールバック */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .gap-8 {
+            gap: 2rem;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .h-full {
+            height: 100%;
+        }
+
+        .min-h-screen {
+            min-height: 100vh;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .bg-white {
+            background-color: white;
+        }
+
+        .bg-blue-600 {
+            background-color: #2563eb;
+        }
+
+        .rounded {
+            border-radius: 0.25rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .p-8 {
+            padding: 2rem;
+        }
+
+        .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .py-16 {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .border {
+            border-width: 1px;
+        }
+
+        .border-gray-200 {
+            border-color: #e5e7eb;
+        }
+
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .grid-cols-2,
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 0.5rem;
+            }
+        }
+
+        /* 基本的なレスポンシブ設定 */
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 13px;
+            }
+        }
+
+        /* 🔽 プレミアムセレクト - レスポンシブ対応 */
+        .luxury-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%232D3748' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 3rem;
+            color: var(--primary-navy);
+            font-weight: 500;
+            font-size: var(--text-base);
+            min-height: 48px;
+        }
+
+        .luxury-select option {
+            background: white;
+            color: var(--primary-navy);
+            font-weight: 500;
+            padding: 0.5rem;
+            font-size: var(--text-base);
+        }
+
+        .luxury-select option:disabled {
+            color: var(--neutral-500);
+            font-style: italic;
+        }
+
+        /* 📊 エレガントプログレスバー */
+        .luxury-progress {
+            background: var(--neutral-200);
+            border-radius: 12px;
+            height: clamp(6px, 0.8vw, 8px);
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .luxury-progress-fill {
+            background: var(--gradient-gold);
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 🏆 ヒーローセクション - レスポンシブ対応 */
+        .hero-section-premium {
+            background: linear-gradient(135deg, #0B1426 0%, #1A2332 30%, #2D3748 70%, #374151 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            padding: var(--space-lg);
+        }
+
+        .hero-section-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.8;
+        }
+
+        .hero-section-premium::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(11, 20, 38, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            padding-top: var(--space-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 📈 統計カード - レスポンシブ対応 */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: clamp(16px, 2vw, 20px);
+            padding: var(--space-lg);
+            text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.4s ease;
+            animation: elegant-float 6s ease-in-out infinite;
+            width: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent-gold);
+        }
+
+        .stats-number {
+            font-family: var(--font-display);
+            font-size: var(--text-4xl);
+            font-weight: 700;
+            color: var(--primary-navy);
+            line-height: 1;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 💰 予想資産額表示の特別スタイル */
+        .number-display {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: var(--text-5xl);
+            position: relative;
+            display: inline-block;
+            animation: number-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes number-glow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+                transform: scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+                transform: scale(1.02);
+            }
+        }
+
+        /* 高コントラスト資産額表示 */
+        .asset-amount-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 3px solid var(--accent-gold);
+            box-shadow: 
+                0 20px 40px rgba(212, 175, 55, 0.2),
+                0 0 0 1px rgba(212, 175, 55, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            padding: var(--space-xl);
+            border-radius: clamp(16px, 2vw, 24px);
+        }
+
+        /* 🔘 ラジオオプション - レスポンシブ対応 */
+        .radio-option {
+            background: #ffffff;
+            border: 2px solid var(--neutral-400);
+            border-radius: clamp(8px, 1vw, 12px);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+            min-height: 56px;
+        }
+
+        .radio-option:hover {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.08);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .radio-option:has(input[type="radio"]:checked) {
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.12);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2), 0 4px 16px rgba(0, 0, 0, 0.12);
+            border-width: 3px;
+        }
+
+        .radio-option input[type="radio"] {
+            appearance: none;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            position: absolute;
+        }
+
+        /* ラジオオプション内のテキストとアイコンのスタイリング */
+        .radio-option-content {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            width: 100%;
+            color: var(--primary-navy);
+            font-weight: 600;
+            font-size: var(--text-base);
+            transition: all 0.3s ease;
+        }
+
+        .radio-option-content i {
+            color: var(--neutral-600);
+            font-size: var(--text-lg);
+            min-width: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .radio-option-content span {
+            color: var(--primary-navy);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* 選択時のスタイル */
+        .radio-option:has(input[type="radio"]:checked) .radio-option-content {
+            color: var(--primary-navy);
+            font-weight: 600;
+        }
+
+        .radio-option:has(input[type="radio"]:checked) .radio-option-content i {
+            color: var(--accent-gold);
+            transform: scale(1.1);
+        }
+
+        .radio-option:has(input[type="radio"]:checked) .radio-option-content span {
+            color: var(--primary-navy);
+            font-weight: 600;
+        }
+
+        /* 🌟 セキュリティバッジ - レスポンシブ対応 */
+        .security-badge {
+            background-color: rgb(44, 62, 80);
+            color: white;
+            border-radius: clamp(12px, 1.5vw, 16px);
+            padding: var(--space-sm) var(--space-md);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .security-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* 📱 強化されたデバイス別レスポンシブデザイン */
+        
+        /* Extra Small phones: 320px-375px */
+        @media (max-width: 375px) {
+            body {
+                font-size: clamp(16px, 4vw, 18px);
+                padding: 0 0.5rem;
+            }
+            
+            .luxury-card {
+                padding: var(--space-md) !important;
+                margin: var(--space-xs) !important;
+                border-radius: 12px !important;
+            }
+            
+            .premium-button {
+                width: 100% !important;
+                max-width: none !important;
+                padding: 16px !important;
+                font-size: 15px !important;
+                min-height: 50px !important;
+            }
+            
+            .hero-section-premium {
+                padding: var(--space-sm) !important;
+                min-height: auto !important;
+            }
+            
+            .stats-card {
+                margin-bottom: var(--space-sm) !important;
+                padding: var(--space-md) !important;
+            }
+            
+            .heading-display {
+                font-size: 1.75rem !important;
+                line-height: 1.3 !important;
+            }
+            
+            .heading-primary {
+                font-size: 1.5rem !important;
+                line-height: 1.4 !important;
+            }
+        }
+
+        /* Small phones: 376px-414px */
+        @media (min-width: 376px) and (max-width: 414px) {
+            .luxury-card {
+                padding: var(--space-lg) !important;
+                margin: var(--space-sm) !important;
+            }
+            
+            .premium-button {
+                font-size: 16px !important;
+                min-height: 52px !important;
+            }
+            
+            .heading-display {
+                font-size: 2rem !important;
+            }
+        }
+
+        /* Large phones: 415px-640px */
+        @media (min-width: 415px) and (max-width: 640px) {
+            body {
+                font-size: 16px;
+                padding: 0 1rem;
+            }
+            
+            .luxury-card {
+                padding: var(--space-xl);
+                margin: var(--space-md);
+                max-width: calc(100vw - 2rem);
+            }
+            
+            .premium-button {
+                width: 100%;
+                max-width: 100%;
+                font-size: 17px;
+                min-height: 54px;
+            }
+            
+            .stats-card {
+                margin-bottom: var(--space-md);
+                padding: var(--space-lg);
+            }
+            
+            .hero-section-premium {
+                padding: var(--space-lg);
+            }
+            
+            /* グリッドレイアウトの調整 */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-lg) !important;
+            }
+            
+            /* フォームの最適化 */
+            .luxury-input,
+            .luxury-select {
+                font-size: 16px; /* iOSのズーム防止 */
+                min-height: 52px;
+            }
+        }
+
+        /* タブレット (641px - 1024px) - 強化版 */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            body {
+                padding: 0 1.5rem;
+            }
+            
+            .luxury-card {
+                padding: var(--space-xl);
+                max-width: 90%;
+                margin: 0 auto var(--space-lg);
+                border-radius: 20px;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 2rem !important;
+            }
+            
+            .premium-button {
+                width: auto;
+                min-width: 240px;
+                max-width: 400px;
+                font-size: 18px;
+                min-height: 56px;
+                padding: 16px 32px;
+            }
+            
+            .stats-card {
+                padding: var(--space-xl);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .hero-section-premium {
+                padding: var(--space-xl);
+            }
+            
+            /* タブレット専用のフォントサイズ調整 */
+            .heading-display {
+                font-size: clamp(2.5rem, 4vw, 3rem);
+            }
+            
+            .heading-primary {
+                font-size: clamp(2rem, 3vw, 2.5rem);
+            }
+            
+            .text-luxury {
+                font-size: 1.125rem;
+                line-height: 1.7;
+            }
+            
+            /* タブレット用ナビゲーション最適化 */
+            .luxury-input,
+            .luxury-select {
+                font-size: 17px;
+                min-height: 54px;
+                padding: 14px 20px;
+            }
+        }
+
+        /* iPad Pro (1024px - 1366px) */
+        @media (min-width: 1025px) and (max-width: 1366px) {
+            .container {
+                max-width: 1024px;
+                margin: 0 auto;
+                padding: 0 var(--space-xl);
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+
+        /* デスクトップ (1367px以上) */
+        @media (min-width: 1367px) {
+            .container {
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 0 var(--space-2xl);
+            }
+            
+            .luxury-card {
+                padding: var(--space-2xl);
+            }
+        }
+
+        /* 高解像度ディスプレイ対応 */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+
+        /* 横向きモバイル対応 */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .hero-section-premium {
+                min-height: auto;
+                padding: var(--space-md);
+            }
+            
+            .luxury-card {
+                padding: var(--space-md);
+            }
+        }
+
+        /* 🦶 プレミアムフッター - レスポンシブ対応 */
+        .premium-footer {
+            background: var(--gradient-primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            padding: var(--space-2xl) var(--space-lg);
+        }
+
+        .premium-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.05'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .premium-footer > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .premium-footer .footer-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--text-base);
+            line-height: 1.7;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .premium-footer .footer-info {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: var(--text-sm);
+            line-height: 1.6;
+        }
+
+        .premium-footer .footer-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: var(--text-sm);
+            transition: all 0.3s ease;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .premium-footer .footer-link:hover {
+            color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-1px);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .premium-footer .footer-copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: var(--text-xs);
+            font-weight: 400;
+        }
+
+        /* ✨ Sparkle & Heart アニメーション */
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            animation: sparkle-twinkle 2s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes sparkle-twinkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .heart {
+            position: absolute;
+            font-size: clamp(16px, 2vw, 20px);
+            opacity: 0.7;
+            animation: heart-float 8s infinite linear;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .heart-item {
+            position: absolute;
+            animation: heart-float 8s infinite linear;
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
+        }
+
+        @keyframes heart-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ♿ アクセシビリティ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .premium-button:focus-visible,
+        .luxury-input:focus-visible,
+        .radio-option:focus-within,
+        .footer-link:focus-visible {
+            outline: 3px solid var(--accent-gold);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.2);
+        }
+
+        /* 強化されたタッチデバイス最適化 */
+        @media (hover: none) and (pointer: coarse) {
+            /* Apple推奨の最小タッチターゲットサイズ 44px */
+            .premium-button,
+            .luxury-input,
+            .luxury-select,
+            .radio-option,
+            button,
+            input[type="submit"],
+            input[type="button"],
+            a[role="button"],
+            .clickable {
+                min-height: 48px !important;
+                min-width: 48px !important;
+                padding: 12px 16px !important;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            }
+            
+            /* フォーム要素の最適化 */
+            input[type="text"],
+            input[type="tel"],
+            input[type="email"],
+            input[type="password"],
+            textarea,
+            select {
+                min-height: 48px !important;
+                font-size: 16px !important; /* iOS Safari ズーム防止 */
+                padding: 12px 16px !important;
+                -webkit-appearance: none;
+                border-radius: 8px;
+            }
+            
+            /* ホバー効果の無効化（タッチデバイスでは不要） */
+            .premium-button:hover,
+            .luxury-card:hover,
+            .stats-card:hover,
+            .radio-option:hover {
+                transform: none !important;
+            }
+            
+            /* タップ時のアクティブ状態 */
+            .premium-button:active {
+                transform: scale(0.98);
+                opacity: 0.9;
+            }
+            
+            /* テキストサイズの調整 */
+            body {
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+        }
+
+        /* iOS Safari特有の問題対応 */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS Safari専用スタイル */
+            input,
+            textarea,
+            select {
+                font-size: 16px !important; /* ズーム防止 */
+                -webkit-appearance: none;
+                border-radius: 0;
+            }
+            
+            /* iOS Safe Area対応 */
+            @supports (padding: max(0px)) {
+                body {
+                    padding-left: max(1rem, env(safe-area-inset-left));
+                    padding-right: max(1rem, env(safe-area-inset-right));
+                }
+                
+                .luxury-card {
+                    margin-bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+                }
+                
+                .premium-footer {
+                    padding-bottom: max(var(--space-2xl), env(safe-area-inset-bottom));
+                }
+            }
+        }
+
+        /* Android Chrome最適化 */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+            .premium-button {
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+
+        /* 高解像度ディスプレイでのテキスト改善 */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                text-rendering: optimizeLegibility;
+            }
+            
+            .heading-display,
+            .heading-primary {
+                font-weight: 500; /* 高解像度では少し軽く */
+            }
+        }
+
+        /* 印刷対応 */
+        @media print {
+            * {
+                background: transparent !important;
+                color: black !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            
+            body {
+                background: white;
+                color: black;
+                font-size: 12pt;
+                line-height: 1.4;
+            }
+            
+            .luxury-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+            
+            .premium-button {
+                background: #333;
+                color: white;
+                border: 1px solid #333;
+            }
+            
+            /* 不要な要素を非表示 */
+            .no-print,
+            nav,
+            .hero-section-premium::before,
+            .hero-section-premium::after {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>

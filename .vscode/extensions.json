@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "eamodio.gitlens",
+    "donjayamanne.git-extension-pack", 
+    "mhutchie.git-graph",
+    "huizhou.githd",
+    "waderyan.gitblame",
+    "alefragnani.git-history",
+    "codezombiech.gitignore",
+    "github.vscode-pull-request-github",
+    "ms-vscode.vscode-json",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.sublime-keybindings",
+    "usernamehw.errorlens"
+  ]
+}
